@@ -1,4 +1,4 @@
-# cdnX
+# cdnX -  DEMO PAGE - https://coreyadam8.github.io/cdnX/
 
 **Smart JavaScript CDN loader with automatic fallback, resilience, and customization.**
 
