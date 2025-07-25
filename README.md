@@ -28,7 +28,7 @@ cdnX allows you to load external JavaScript libraries dynamically at runtime, tr
 ## 🔧 Usage
 
 ```html
-<script src="cdnx.min.js"></script>
+<script src="https://unpkg.com/cdnx@1.0.0/dist/cdnx.min.js"></script>
 <script>
   cdnX.loadLibrary('lodash', '4.17.21', 'lodash.min.js', {
     cdnOrder: ['jsdelivr', 'unpkg', 'cdnjs', 'skypack']
