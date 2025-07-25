@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>cdnX Loader GUI</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 30px auto; }
+    label, button { display: block; margin: 10px 0 5px; }
+    input, select { width: 100%; padding: 6px; }
+    #cdn-list label { display: inline-block; margin-right: 15px; }
+    #output { margin-top: 20px; background: #f0f0f0; padding: 10px; white-space: pre-wrap; min-height: 80px; }
+  </style>
+</head>
+<body>
+
+  <h2>cdnX Library Loader</h2>
+
+  <label for="libName">Library Name (package):</label>
+  <input type="text" id="libName" placeholder="e.g. lodash" value="lodash" />
+
+  <label for="libVersion">Version:</label>
+  <input type="text" id="libVersion" placeholder="e.g. 4.17.21" value="4.17.21" />
+
+  <label for="libPath">Path (file):</label>
+  <input type="text" id="libPath" placeholder="e.g. lodash.min.js" value="lodash.min.js" />
+
+  <fieldset id="cdn-list">
+    <legend>Select CDNs to try:</legend>
+    <label><input type="checkbox" value="jsdelivr" checked /> jsDelivr</label>
+    <label><input type="checkbox" value="unpkg" checked /> unpkg</label>
+    <label><input type="checkbox" value="cdnjs" checked /> cdnjs</label>
+    <label><input type="checkbox" value="skypack" checked /> skypack</label>
+  </fieldset>
+
+  <button id="loadBtn">Load Library</button>
+
+  <div id="output"></div>
+
+  <!-- cdnX must be loaded before this script -->
+  <script src="cdnx.min.js"></script>
+  <script>
+    const loadBtn = document.getElementById('loadBtn');
+    const output = document.getElementById('output');
+
+    loadBtn.addEventListener('click', async () => {
+      output.textContent = '';
+      const libName = document.getElementById('libName').value.trim();
+      const libVersion = document.getElementById('libVersion').value.trim();
+      const libPath = document.getElementById('libPath').value.trim();
+
+      if (!libName || !libVersion || !libPath) {
+        alert('Please fill in all fields.');
+        return;
+      }
+
+      // Gather selected CDNs
+      const cdnChecks = document.querySelectorAll('#cdn-list input[type=checkbox]');
+      const selectedCDNs = Array.from(cdnChecks)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+
+      if (selectedCDNs.length === 0) {
+        alert('Select at least one CDN.');
+        return;
+      }
+
+      output.textContent = `Attempting to load ${libName}@${libVersion} from selected CDNs...\n\n`;
+
+      for (const cdn of selectedCDNs) {
+        output.textContent += `Trying CDN: ${cdn} ... `;
+
+        try {
+          await cdnX.loadLibrary(libName, libVersion, libPath, { cdnOrder: [cdn] });
+          output.textContent += 'SUCCESS ✅\n';
+        } catch (err) {
+          output.textContent += `FAIL ❌ (${err.message})\n`;
+        }
+      }
+
+      output.textContent += '\nLoading attempts completed.';
+    });
+  </script>
+
+</body>
+</html>
